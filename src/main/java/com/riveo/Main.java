@@ -5,14 +5,14 @@
     import com.riveo.service.GoldenRatioService;
 
     public class Main {
-        public static final double testFunction(final double x) {
+        public static double testFunction(final double x) {
             return x * (x - 1.0);
         }
 
-        static final double LHS = -100;
-        static final double RHS = 100;
+        static final double LHS = -10;
+        static final double RHS = 10;
         static final double EPS = 1e-6;
-        static final int MAX_ITERATIONS = 1000;
+        static final int MAX_ITERATIONS = 100;
 
         static BisectService bisectService = new BisectService();
         static GoldenRatioService goldenRatioService = new GoldenRatioService();

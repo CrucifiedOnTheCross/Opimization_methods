@@ -34,8 +34,8 @@ public class GoldenRatioService {
             iteration++;
         }
 
-        System.out.printf("BiSect::function probes count : %s\n", 2 + iteration);
-        System.out.printf("BiSect::function arg range    : %s\n", rhs - lhs);
+        System.out.printf("Golden::function probes count : %s\n", 2 + iteration);
+        System.out.printf("Golden::function arg range    : %s\n", rhs - lhs);
 
         return (rhs + lhs) * 0.5;
     }
