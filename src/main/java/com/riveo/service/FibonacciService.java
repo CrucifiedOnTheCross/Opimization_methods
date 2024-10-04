@@ -3,8 +3,8 @@ package com.riveo.service;
 import com.riveo.math.FibonacciPair;
 import com.riveo.math.IFunction1D;
 
-public class FibonachiService {
-    public double getExtremum(IFunction1D func, double lhs, double rhs, final double eps) {
+public class FibonacciService {
+    public  double getExtremum(IFunction1D func, double lhs, double rhs, final double eps) {
         if (lhs > rhs) {
             final double tmp = lhs;
             lhs = rhs;
@@ -20,7 +20,7 @@ public class FibonachiService {
         double fl = func.call(xL);
         double fr = func.call(xr);
 
-        fibs.updateFibonacciPair();
+        fibs.shiftForwardFibonacciPair();
 
         for (int i = iterations; i > 0; i--) {
             if (fl > fr) {
@@ -36,7 +36,7 @@ public class FibonachiService {
                 xL = lhs + (rhs - lhs) * ((fibs.fb - fibs.fbPref) / fibs.fb);
                 fl = func.call(xL);
             }
-            fibs.updateFibonacciPair();
+            fibs.shiftForwardFibonacciPair();
         }
 
         System.out.printf("Fibonachi::function probes count : %s\n", 2 + iterations);

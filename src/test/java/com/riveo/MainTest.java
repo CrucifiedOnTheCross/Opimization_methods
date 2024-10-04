@@ -1,7 +1,7 @@
 package com.riveo;
 
 import com.riveo.service.BisectService;
-import com.riveo.service.FibonachiService;
+import com.riveo.service.FibonacciService;
 import com.riveo.service.GoldenRatioService;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ public class MainTest {
 
     @Test
     public void testFibonachiService() {
-        FibonachiService fibonachiService = new FibonachiService();
+        FibonacciService fibonachiService = new FibonacciService();
         double result = fibonachiService.getExtremum(MainTest::testFunction, -100, 100, 1e-6);
         assertEquals(RESULT, result, EPS);
     }

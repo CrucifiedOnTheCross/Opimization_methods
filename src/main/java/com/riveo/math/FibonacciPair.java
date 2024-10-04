@@ -21,7 +21,7 @@ public class FibonacciPair {
         return iterations;
     }
 
-    public void updateFibonacciPair() {
+    public void shiftForwardFibonacciPair() {
         double tmp = this.fb - this.fbPref;
         this.fb = this.fbPref;
         this.fbPref = tmp;
