@@ -1,8 +1,8 @@
 package com.riveo;
 
-import com.riveo.service.BisectService;
-import com.riveo.service.FibonacciService;
-import com.riveo.service.GoldenRatioService;
+import com.riveo.service.BisectService1D;
+import com.riveo.service.FibonacciService1D;
+import com.riveo.service.GoldenRatioService1D;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,21 +20,21 @@ public class MainTest {
 
     @Test
     public void testBisectService() {
-        BisectService bisectService = new BisectService();
+        BisectService1D bisectService = new BisectService1D();
         double result = bisectService.getExtremum(MainTest::testFunction, -100, 100, 1e-6, 1000);
         assertEquals(RESULT, result, EPS);
     }
 
     @Test
     public void testGoldenRatioService() {
-        GoldenRatioService goldenRatioService = new GoldenRatioService();
+        GoldenRatioService1D goldenRatioService = new GoldenRatioService1D();
         double result = goldenRatioService.getExtremum(MainTest::testFunction, -100, 100, 1e-6, 1000);
         assertEquals(RESULT, result, EPS);
     }
 
     @Test
     public void testFibonachiService() {
-        FibonacciService fibonachiService = new FibonacciService();
+        FibonacciService1D fibonachiService = new FibonacciService1D();
         double result = fibonachiService.getExtremum(MainTest::testFunction, -100, 100, 1e-6);
         assertEquals(RESULT, result, EPS);
     }

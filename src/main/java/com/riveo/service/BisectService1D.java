@@ -2,9 +2,9 @@ package com.riveo.service;
 
 import com.riveo.math.IFunction1D;
 
-public class BisectService {
+public class BisectService1D {
 
-    public double getExtremum(IFunction1D func, double lhs, double rhs, final double epsilon, final int max_iter) {
+    public static double getExtremum(IFunction1D func, double lhs, double rhs, final double epsilon, final int max_iter) {
         if (lhs > rhs) {
             double tmp = lhs;
             lhs = rhs;
@@ -25,11 +25,10 @@ public class BisectService {
         System.out.printf("BiSect::function probes count : %s\n", 2 * iteration);
         System.out.printf("BiSect::function arg range    : %s\n", rhs - lhs);
 
-
         return (lhs + rhs) * 0.5;
     }
 
-    public double getExtremum(IFunction1D func, double lhs, double rhs) {
+    public static double getExtremum(IFunction1D func, double lhs, double rhs) {
         return getExtremum(func, lhs, lhs, 1e-6, 10_000);
     }
 }

@@ -3,8 +3,8 @@ package com.riveo.service;
 import com.riveo.math.IFunction1D;
 import com.riveo.math.MathConstants;
 
-public class GoldenRatioService {
-    public double getExtremum(IFunction1D func, double lhs, double rhs, final double epsilon, final int max_iter) {
+public class GoldenRatioService1D {
+    public static double getExtremum(IFunction1D func, double lhs, double rhs, final double epsilon, final int max_iter) {
         if (lhs > rhs) {
             double tmp = lhs;
             lhs = rhs;
