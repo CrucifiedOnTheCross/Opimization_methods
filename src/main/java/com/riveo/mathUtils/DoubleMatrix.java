@@ -11,8 +11,6 @@ enum SolutionType {
     None
 }
 
-
-@SuppressWarnings("all")
 public final class DoubleMatrix extends TemplateVector<DoubleVector> {
 
     protected DoubleMatrix(Slice rows, DoubleMatrix source) {
@@ -118,10 +116,9 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
         return this;
     }
 
-    /**
+        /**
      * Добавляет новый столбец к матрице.
      *
-     * @param col новый стобец.
      * @return обновлённая матрица.
      */
     public DoubleMatrix addCol() {

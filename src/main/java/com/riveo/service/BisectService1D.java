@@ -1,6 +1,6 @@
 package com.riveo.service;
 
-import com.riveo.math.IFunction1D;
+import com.riveo.Functional.IFunction1D;
 
 public class BisectService1D {
 

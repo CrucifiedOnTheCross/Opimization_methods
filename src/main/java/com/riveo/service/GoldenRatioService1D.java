@@ -1,7 +1,7 @@
 package com.riveo.service;
 
-import com.riveo.math.IFunction1D;
-import com.riveo.math.MathConstants;
+import com.riveo.Functional.IFunction1D;
+import com.riveo.mathUtils.NumericCommon;
 
 public class GoldenRatioService1D {
     public static double getExtremum(IFunction1D func, double lhs, double rhs, final double epsilon, final int max_iter) {
@@ -12,8 +12,8 @@ public class GoldenRatioService1D {
         }
 
         int iteration = 0;
-        double xl = rhs - (rhs - lhs) * MathConstants.PSI;
-        double xr = lhs + (rhs - lhs) * MathConstants.PSI;
+        double xl = rhs - (rhs - lhs) * NumericCommon.PSI;
+        double xr = lhs + (rhs - lhs) * NumericCommon.PSI;
         double fl = func.call(xl);
         double fr = func.call(xr);
 
@@ -22,13 +22,13 @@ public class GoldenRatioService1D {
                 lhs = xl;
                 xl = xr;
                 fl = fr;
-                xr = lhs + (rhs - lhs) * MathConstants.PSI;
+                xr = lhs + (rhs - lhs) * NumericCommon.PSI;
                 fr = func.call(xr);
             } else {
                 rhs = xr;
                 xr = xl;
                 fr = fl;
-                xl = rhs - (rhs - lhs) * MathConstants.PSI;
+                xl = rhs - (rhs - lhs) * NumericCommon.PSI;
                 fl = func.call(xl);
             }
             iteration++;
