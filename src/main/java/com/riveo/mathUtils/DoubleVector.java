@@ -1,6 +1,6 @@
 package com.riveo.mathUtils;
 
-import com.riveo.Functional.IFunctionND;
+import com.riveo.functional.IFunctionND;
 
 
 @SuppressWarnings("all")
@@ -235,4 +235,18 @@ public final class DoubleVector extends TemplateVector<Double> {
     public static DoubleVector gradient(IFunctionND func, DoubleVector x) {
         return gradient(func, x, NumericCommon.NUMERIC_ACCURACY_MIDDLE);
     }
+
+    public static double distance(DoubleVector a, DoubleVector b) {
+        if (a.size() != b.size())
+            throw new RuntimeException("Vectors distance :: a.Size()!= b.Size()");
+
+        double sum = 0.0;
+        for (int i = 0; i < a.size(); i++) {
+            double diff = a.get(i) - b.get(i);
+            sum += diff * diff;
+        }
+
+        return Math.sqrt(sum);
+    }
+
 }

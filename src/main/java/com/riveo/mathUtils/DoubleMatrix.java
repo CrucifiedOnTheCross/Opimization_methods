@@ -1,6 +1,6 @@
 package com.riveo.mathUtils;
 
-import com.riveo.Functional.IFunctionND;
+import com.riveo.functional.IFunctionND;
 
 import java.util.Objects;
 

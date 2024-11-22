@@ -11,8 +11,8 @@ public class NumericCommon {
     public static final int    ITERATIONS_COUNT_HIGH   = 1000;
     public static final int    ITERATIONS_COUNT_MIDDLE = 500;
     public static final int    ITERATIONS_COUNT_LOW    = 100;
-    public static boolean      SHOW_ZERO_ORDER_METHODS_DEBUG_LOG = false;
-    public static boolean      SHOW_DEBUG_LOG = false;
+    public static boolean      SHOW_ZERO_ORDER_METHODS_DEBUG_LOG = true;
+    public static boolean      SHOW_DEBUG_LOG = true;
     public static boolean      SHOW_SIMPLEX_DEBUG_LOG = false;
     public static boolean      SHOW_MATRIX_DEBUG_LOG  = false;
     public static boolean      NUMBER_RATIONAL_FORMAT = false;

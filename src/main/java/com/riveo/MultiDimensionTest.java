@@ -1,22 +1,13 @@
 package com.riveo;
 
-import com.riveo.Functional.IFunctionND;
+import com.riveo.functional.IFunctionND;
 import com.riveo.mathUtils.DoubleVector;
 import com.riveo.service.MultiDimensional;
 
 public class MultiDimensionTest {
 
-    static class ParabolaFunction implements IFunctionND {
-        @Override
-        public double call(DoubleVector point) {
-            double x = point.get(0);
-            double y = point.get(1);
-            return Math.pow(x - 1, 2) + Math.pow(y - 2, 2);
-        }
-    }
-
     public static void main(String[] args) {
-        IFunctionND testFunction = new ParabolaFunction();
+        IFunctionND testFunction = x -> Math.pow(x.get(0) - 3, 2) + Math.pow(x.get(1) + 2, 2);
 
         DoubleVector left = new DoubleVector(-5.0, -5.0);
         DoubleVector right = new DoubleVector(5.0, 5.0);

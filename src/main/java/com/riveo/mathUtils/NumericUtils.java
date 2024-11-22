@@ -1,6 +1,6 @@
 package com.riveo.mathUtils;
-import com.riveo.Functional.IFunction1D;
-import com.riveo.Functional.IFunctionND;
+import com.riveo.functional.IFunction1D;
+import com.riveo.functional.IFunctionND;
 
 
 @SuppressWarnings("all")

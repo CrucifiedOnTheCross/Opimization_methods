@@ -1,10 +1,12 @@
 package com.riveo.service;
 
-import com.riveo.Functional.IFunctionND;
+import com.riveo.functional.IFunctionND;
+import com.riveo.mathUtils.DoubleMatrix;
 import com.riveo.mathUtils.DoubleVector;
 import com.riveo.mathUtils.NumericCommon;
 
-@SuppressWarnings("all")
+import java.util.Objects;
+
 public class MultiDimensional {
     public static DoubleVector biSect(IFunctionND function,
                                       DoubleVector left,
@@ -195,4 +197,82 @@ public class MultiDimensional {
     public static DoubleVector perCordDescend(IFunctionND function, DoubleVector xStart) {
         return perCordDescend(function, xStart, NumericCommon.NUMERIC_ACCURACY_MIDDLE, NumericCommon.ITERATIONS_COUNT_HIGH);
     }
+
+    public static DoubleVector gradientDescend(IFunctionND function, DoubleVector xStart, double eps, int maxIterations) {
+        DoubleVector x_i = new DoubleVector(xStart);
+        DoubleVector x_i_1 = new DoubleVector(xStart);
+        int cnt = 0;
+        for (; cnt != maxIterations; cnt++) {
+            x_i_1 = DoubleVector.sub(x_i, DoubleVector.gradient(function, x_i, eps));
+            x_i_1 = biSect(function, x_i, x_i_1, eps, maxIterations);
+            if (DoubleVector.distance(x_i_1, x_i) < 2 * eps) break;
+            x_i = x_i_1;
+        }
+
+        if (NumericCommon.SHOW_DEBUG_LOG) System.out.printf("gradient descend iterations number : %s\n", cnt + 1);
+
+        return DoubleVector.add(x_i_1, x_i).mul(0.5);
+    }
+
+    public static DoubleVector gradientDescend(IFunctionND function, DoubleVector xStart, double eps) {
+        return gradientDescend(function, xStart, eps, NumericCommon.ITERATIONS_COUNT_HIGH);
+    }
+
+    public static DoubleVector gradientDescend(IFunctionND function, DoubleVector xStart) {
+        return gradientDescend(function, xStart, NumericCommon.NUMERIC_ACCURACY_MIDDLE, NumericCommon.ITERATIONS_COUNT_HIGH);
+    }
+
+    public static DoubleVector conjGradientDescend(IFunctionND function, DoubleVector xStart, double eps, int maxIterations) {
+        DoubleVector x_i = new DoubleVector(xStart);
+        DoubleVector x_i_1 = new DoubleVector(xStart);
+        DoubleVector s_i = DoubleVector.gradient(function, xStart, eps).mul(-1.0), s_i_1;
+        double omega;
+        int iteration = 0;
+        for (; iteration != maxIterations; iteration++) {
+            x_i_1 = DoubleVector.add(x_i, s_i);
+            x_i_1 = biSect(function, x_i, x_i_1, eps, maxIterations);
+            if (DoubleVector.distance(x_i_1, x_i) < 2 * eps) break;
+            s_i_1 = DoubleVector.gradient(function, x_i_1, eps);
+            omega = Math.pow((s_i_1).magnitude(), 2) / Math.pow((s_i).magnitude(), 2);
+            s_i.mul(omega).sub(s_i_1);
+            x_i = x_i_1;
+        }
+
+        if (NumericCommon.SHOW_DEBUG_LOG)
+            System.out.printf("Conj gradient descend iterations number : %s\n", iteration + 1);
+        return DoubleVector.add(x_i_1, x_i).mul(0.5);
+    }
+
+    public static DoubleVector conjGradientDescend(IFunctionND function, DoubleVector xStart, double eps) {
+        return conjGradientDescend(function, xStart, eps, NumericCommon.ITERATIONS_COUNT_HIGH);
+    }
+
+    public static DoubleVector conjGradientDescend(IFunctionND function, DoubleVector xStart) {
+        return conjGradientDescend(function, xStart, NumericCommon.NUMERIC_ACCURACY_MIDDLE, NumericCommon.ITERATIONS_COUNT_HIGH);
+    }
+
+    public static DoubleVector newtoneRaphson(IFunctionND function, DoubleVector xStart, double eps, int maxIterations) {
+        DoubleVector x_i = new DoubleVector(xStart);
+        DoubleVector x_i_1 = new DoubleVector(xStart);
+        int iteration = 0;
+        do {
+            DoubleMatrix hess = Objects.requireNonNull(DoubleMatrix.invert(DoubleMatrix.hessian(function, x_i, eps)));
+            x_i_1 = DoubleVector.sub(x_i, DoubleMatrix.mul(hess, DoubleVector.gradient(function, x_i, eps)));
+            x_i = x_i_1;
+            iteration++;
+        } while (iteration != maxIterations && DoubleVector.sub(x_i_1, x_i).magnitude() >= eps);
+
+        if (NumericCommon.SHOW_DEBUG_LOG)
+            System.out.printf("Newtone - Raphson iterations number : %s\n", iteration + 1);
+        return DoubleVector.add(x_i_1, x_i).mul(0.5);
+    }
+
+    public static DoubleVector newtoneRaphson(IFunctionND function, DoubleVector xStart, double eps) {
+        return newtoneRaphson(function, xStart, eps, NumericCommon.ITERATIONS_COUNT_LOW);
+    }
+
+    public static DoubleVector newtoneRaphson(IFunctionND function, DoubleVector xStart) {
+        return newtoneRaphson(function, xStart, NumericCommon.NUMERIC_ACCURACY_MIDDLE, NumericCommon.ITERATIONS_COUNT_LOW);
+    }
+
 }

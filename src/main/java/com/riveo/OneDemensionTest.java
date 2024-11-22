@@ -4,7 +4,7 @@ import com.riveo.service.BisectService1D;
 import com.riveo.service.FibonacciService1D;
 import com.riveo.service.GoldenRatioService1D;
 
-public class Main {
+public class OneDemensionTest {
     public static double testFunction(final double x) {
         return x * (x - 1.0);
     }
@@ -15,8 +15,8 @@ public class Main {
     static final int MAX_ITERATIONS = 100;
 
     public static void main(String[] args) {
-        System.out.println(BisectService1D.getExtremum(Main::testFunction, LHS, RHS, EPS, MAX_ITERATIONS));
-        System.out.println(GoldenRatioService1D.getExtremum(Main::testFunction, LHS, RHS, EPS, MAX_ITERATIONS));
-        System.out.println(FibonacciService1D.getExtremum(Main::testFunction, LHS, RHS, EPS * 2));
+        System.out.println(BisectService1D.getExtremum(OneDemensionTest::testFunction, LHS, RHS, EPS, MAX_ITERATIONS));
+        System.out.println(GoldenRatioService1D.getExtremum(OneDemensionTest::testFunction, LHS, RHS, EPS, MAX_ITERATIONS));
+        System.out.println(FibonacciService1D.getExtremum(OneDemensionTest::testFunction, LHS, RHS, EPS * 2));
     }
 }

@@ -1,6 +1,6 @@
 package com.riveo.service;
 
-import com.riveo.Functional.IFunction1D;
+import com.riveo.functional.IFunction1D;
 import com.riveo.mathUtils.NumericCommon;
 
 public class GoldenRatioService1D {

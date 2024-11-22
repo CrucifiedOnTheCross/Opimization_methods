@@ -1,4 +1,4 @@
-package com.riveo.Functional;
+package com.riveo.functional;
 
 @FunctionalInterface
 public interface IFunction1D{

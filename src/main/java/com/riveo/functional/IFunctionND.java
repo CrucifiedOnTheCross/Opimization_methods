@@ -1,4 +1,4 @@
-package com.riveo.Functional;
+package com.riveo.functional;
 import com.riveo.mathUtils.DoubleVector;
 
 @FunctionalInterface

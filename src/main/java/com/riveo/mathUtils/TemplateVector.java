@@ -1,5 +1,5 @@
 package com.riveo.mathUtils;
-import com.riveo.Functional.*;
+import com.riveo.functional.*;
 import java.util.Iterator;
 import java.util.Arrays;
 
