@@ -56,149 +56,6 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
         apply(original, DoubleVector::new);
     }
 
-    @Override
-    public String toString() {
-        return String.format("{\n\t%s\n}", String.join(";\n\t", map(this, Object::toString)));
-    }
-
-    /**
-     * Строка матрицы.
-     *
-     * @param rowId номер строки.
-     * @return строка матрицы.
-     */
-    public DoubleVector row(int rowId) {
-        return get(rowId);
-    }
-
-    /**
-     * Вектор строк матрицы.
-     *
-     * @return вектор строк матрицы.
-     */
-    public TemplateVector<DoubleVector> getRows() {
-        return this;
-    }
-
-    /**
-     * Количество строк.
-     *
-     * @return Количество строк.
-     */
-    public int rowsCount() {
-        return super.size();
-    }
-
-    /**
-     * Количество столбцов.
-     *
-     * @return Количество столбцов.
-     */
-    public int colsCount() {
-        if (rowsCount() == 0) return 0;
-        return row(0).size();
-    }
-
-    /**
-     * Добавляет новый столбец к матрице.
-     *
-     * @param col новый стобец.
-     * @return обновлённая матрица.
-     */
-    public DoubleMatrix addCol(DoubleVector col) {
-        if (col == null) return this;
-        if (col.size() != rowsCount())
-            throw new RuntimeException("Error::AddCol::col.Size != NRows");
-        applyEnumerate((index, row) -> {
-            row.pushBack(col.get(index));
-            return row;
-        });
-        return this;
-    }
-
-        /**
-     * Добавляет новый столбец к матрице.
-     *
-     * @return обновлённая матрица.
-     */
-    public DoubleMatrix addCol() {
-        applyEnumerate((index, row) -> {
-            row.pushBack(0.0);
-            return row;
-        });
-        return this;
-    }
-
-    /**
-     * Добавляет новую строку к матрице.
-     *
-     * @param row новая строка.
-     * @return обновлённая матрица.
-     */
-    public DoubleMatrix addRow(DoubleVector row) {
-        if (row == null) return this;
-        if (row.size() != colsCount())
-            throw new RuntimeException("Error::AddRow::row.Size != NCols");
-        pushBack(row);
-        return this;
-    }
-
-    public DoubleMatrix addRow() {
-        pushBack(new DoubleVector(colsCount()));
-        return this;
-    }
-
-    /**
-     * Размерность матрицы.
-     *
-     * @return массив из целых чисел (количество строк, количество столбцов).
-     */
-    public final int[] shape() {
-        return new int[]{rowsCount(), colsCount()};
-    }
-
-    /**
-     * Элемент матрицы
-     *
-     * @param row номер строки
-     * @param col номер столбца
-     * @return элемент матрицы[row, col]
-     */
-    public double get(int row, int col) {
-        return get(row).get(col);
-    }
-
-    public DoubleMatrix get(Slice slice) {
-        return new DoubleMatrix(slice, this);
-    }
-
-    public DoubleMatrix get(Slice rows, Slice cols) {
-        return new DoubleMatrix(rows, cols, this);
-    }
-
-    protected double uncheckedGet(int row, int col) {
-        return uncheckedGet(row).uncheckedGet(col);
-    }
-
-    /**
-     * Устанавливает новое значение элемента матрицы
-     * элемент матрицы[row, col] = value
-     *
-     * @param row   номер строки
-     * @param col   номер столбца
-     * @param value новое значение элемента матрицы
-     * @return обновлённая матрица.
-     */
-    public DoubleMatrix set(int row, int col, double value) {
-        get(row).set(col, value);
-        return this;
-    }
-
-    protected DoubleMatrix uncheckedSet(int row, int col, double value) {
-        uncheckedGet(row).uncheckedSet(col, value);
-        return this;
-    }
-
     public static DoubleMatrix hessian(IFunctionND f, DoubleVector x, double eps) {
         DoubleMatrix res = new DoubleMatrix(x.size(), x.size());
         // не учитывает симметричность матрицы
@@ -249,47 +106,6 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
             }
         }
         return rank;
-    }
-
-    public double trace() {
-        double tr = 0;
-        for (int row = 0; row < Math.min(rowsCount(), colsCount()); row++)
-            tr += uncheckedGet(row, row);
-        return tr;
-    }
-
-    /// later
-    /// https://www.codeproject.com/Articles/1268576/Singular-Values-Decomposition-SVD-in-Cplusplus11-b
-
-    double determinant() {
-        DoubleMatrix copy = new DoubleMatrix(this);
-        double det = 1.0;
-        int row, col, pivot;
-        for (row = 0; row < copy.rowsCount(); row++) {
-            pivot = row;
-            for (col = row + 1; col < copy.rowsCount(); col++) {
-                if (Math.abs(copy.uncheckedGet(col, row)) > Math.abs(copy.uncheckedGet(pivot, row))) {
-                    pivot = col;
-                }
-            }
-            if (pivot != row) {
-                var tmp = copy.uncheckedGet(pivot, col);
-                copy.uncheckedSet(pivot, col, copy.uncheckedGet(row, col));
-                copy.uncheckedSet(row, col, tmp);
-                det *= -1.0;
-            }
-            if (Math.abs(copy.uncheckedGet(row, row)) < NumericCommon.NUMERIC_ACCURACY_HIGH) {
-                return 0;
-            }
-            det *= copy.uncheckedGet(row, row);
-            for (int j = row + 1; j < copy.rowsCount(); j++) {
-                double factor = copy.uncheckedGet(j, row) / copy.uncheckedGet(row, row);
-                for (int k = row + 1; k < copy.rowsCount(); k++) {
-                    copy.uncheckedSet(j, k, copy.uncheckedGet(j, k) - factor * copy.uncheckedGet(row, k));
-                }
-            }
-        }
-        return det;
     }
 
     public static DoubleMatrix mexp(final DoubleMatrix matrix, final int steps) {
@@ -386,7 +202,7 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
                     low.uncheckedSet(col, row, src.uncheckedGet(col, row));
                     for (index = 0; index < row; index++)
                         low.uncheckedSet(col, row, low.uncheckedGet(col, row) -
-                                low.uncheckedGet(col, index) * up.uncheckedGet(index, row));
+                                                   low.uncheckedGet(col, index) * up.uncheckedGet(index, row));
                 }
             }
 
@@ -400,7 +216,7 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
                 for (index = 0; index < row; index++)
                     up.uncheckedSet(row, col,
                             up.uncheckedGet(row, col) - low.uncheckedGet(row, index) *
-                                    up.uncheckedGet(index, col) / low.uncheckedGet(row, row));
+                                                        up.uncheckedGet(index, col) / low.uncheckedGet(row, row));
             }
         }
         return new DoubleMatrix[]{low, up};
@@ -519,55 +335,6 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
             throw new RuntimeException("Dot product :: this.Size()!= other.Size()");
     }
 
-    ///////////////////////////////
-    //      ADDITION INTERNAL    //
-
-    /// ////////////////////////////
-    public DoubleMatrix add(DoubleMatrix other) {
-        checkSizes(this, other);
-        combine(other, (l, r) -> l.add(r));
-        return this;
-    }
-
-    public DoubleMatrix add(double other) {
-        apply(v -> v.add(other));
-        return this;
-    }
-
-    ///////////////////////////////
-    //    SUBTRACTION INTERNAL   //
-
-    /// ////////////////////////////
-    public DoubleMatrix sub(DoubleMatrix other) {
-        checkSizes(this, other);
-        combine(other, (l, r) -> l.sub(r));
-        return this;
-    }
-
-    public DoubleMatrix sub(double other) {
-        apply(v -> v.sub(other));
-        return this;
-    }
-
-    ///////////////////////////////
-    //  MULTIPLICATION INTERNAL  //
-
-    /// ////////////////////////////
-    public DoubleMatrix mul(double other) {
-        apply(v -> v.mul(other));
-        return this;
-    }
-    // public mathUtils.Matrix mul(mathUtils.Matrix other) ...
-
-    ///////////////////////////////
-    //     DIVISION INTERNAL     //
-
-    /// ////////////////////////////
-    public DoubleMatrix div(double other) {
-        return this.mul(1.0 / other);
-    }
-    // public mathUtils.Matrix div(mathUtils.Matrix other) ...
-
     /// ////////////////////////////////
     /// /  MULTIPLICATION EXTERNAL  ////
     /// ////////////////////////////////
@@ -673,5 +440,238 @@ public final class DoubleMatrix extends TemplateVector<DoubleVector> {
 
     public static DoubleMatrix div(double left, DoubleMatrix right) {
         return new DoubleMatrix(map(right, row -> (DoubleVector.div(left, row))));
+    }
+
+    @Override
+    public String toString() {
+        return String.format("{\n\t%s\n}", String.join(";\n\t", map(this, Object::toString)));
+    }
+
+    /**
+     * Строка матрицы.
+     *
+     * @param rowId номер строки.
+     * @return строка матрицы.
+     */
+    public DoubleVector row(int rowId) {
+        return get(rowId);
+    }
+
+    ///////////////////////////////
+    //      ADDITION INTERNAL    //
+
+    /**
+     * Вектор строк матрицы.
+     *
+     * @return вектор строк матрицы.
+     */
+    public TemplateVector<DoubleVector> getRows() {
+        return this;
+    }
+
+    /**
+     * Количество строк.
+     *
+     * @return Количество строк.
+     */
+    public int rowsCount() {
+        return super.size();
+    }
+
+    ///////////////////////////////
+    //    SUBTRACTION INTERNAL   //
+
+    /**
+     * Количество столбцов.
+     *
+     * @return Количество столбцов.
+     */
+    public int colsCount() {
+        if (rowsCount() == 0) return 0;
+        return row(0).size();
+    }
+
+    /**
+     * Добавляет новый столбец к матрице.
+     *
+     * @param col новый стобец.
+     * @return обновлённая матрица.
+     */
+    public DoubleMatrix addCol(DoubleVector col) {
+        if (col == null) return this;
+        if (col.size() != rowsCount())
+            throw new RuntimeException("Error::AddCol::col.Size != NRows");
+        applyEnumerate((index, row) -> {
+            row.pushBack(col.get(index));
+            return row;
+        });
+        return this;
+    }
+
+    ///////////////////////////////
+    //  MULTIPLICATION INTERNAL  //
+
+    /**
+     * Добавляет новый столбец к матрице.
+     *
+     * @return обновлённая матрица.
+     */
+    public DoubleMatrix addCol() {
+        applyEnumerate((index, row) -> {
+            row.pushBack(0.0);
+            return row;
+        });
+        return this;
+    }
+    // public mathUtils.Matrix mul(mathUtils.Matrix other) ...
+
+    ///////////////////////////////
+    //     DIVISION INTERNAL     //
+
+    /**
+     * Добавляет новую строку к матрице.
+     *
+     * @param row новая строка.
+     * @return обновлённая матрица.
+     */
+    public DoubleMatrix addRow(DoubleVector row) {
+        if (row == null) return this;
+        if (row.size() != colsCount())
+            throw new RuntimeException("Error::AddRow::row.Size != NCols");
+        pushBack(row);
+        return this;
+    }
+    // public mathUtils.Matrix div(mathUtils.Matrix other) ...
+
+    public DoubleMatrix addRow() {
+        pushBack(new DoubleVector(colsCount()));
+        return this;
+    }
+
+    /**
+     * Размерность матрицы.
+     *
+     * @return массив из целых чисел (количество строк, количество столбцов).
+     */
+    public final int[] shape() {
+        return new int[]{rowsCount(), colsCount()};
+    }
+
+    /**
+     * Элемент матрицы
+     *
+     * @param row номер строки
+     * @param col номер столбца
+     * @return элемент матрицы[row, col]
+     */
+    public double get(int row, int col) {
+        return get(row).get(col);
+    }
+
+    public DoubleMatrix get(Slice slice) {
+        return new DoubleMatrix(slice, this);
+    }
+
+    public DoubleMatrix get(Slice rows, Slice cols) {
+        return new DoubleMatrix(rows, cols, this);
+    }
+
+    protected double uncheckedGet(int row, int col) {
+        return uncheckedGet(row).uncheckedGet(col);
+    }
+
+    /**
+     * Устанавливает новое значение элемента матрицы
+     * элемент матрицы[row, col] = value
+     *
+     * @param row   номер строки
+     * @param col   номер столбца
+     * @param value новое значение элемента матрицы
+     * @return обновлённая матрица.
+     */
+    public DoubleMatrix set(int row, int col, double value) {
+        get(row).set(col, value);
+        return this;
+    }
+
+    protected DoubleMatrix uncheckedSet(int row, int col, double value) {
+        uncheckedGet(row).uncheckedSet(col, value);
+        return this;
+    }
+
+    public double trace() {
+        double tr = 0;
+        for (int row = 0; row < Math.min(rowsCount(), colsCount()); row++)
+            tr += uncheckedGet(row, row);
+        return tr;
+    }
+
+    /// later
+    /// https://www.codeproject.com/Articles/1268576/Singular-Values-Decomposition-SVD-in-Cplusplus11-b
+
+    double determinant() {
+        DoubleMatrix copy = new DoubleMatrix(this);
+        double det = 1.0;
+        int row, col, pivot;
+        for (row = 0; row < copy.rowsCount(); row++) {
+            pivot = row;
+            for (col = row + 1; col < copy.rowsCount(); col++) {
+                if (Math.abs(copy.uncheckedGet(col, row)) > Math.abs(copy.uncheckedGet(pivot, row))) {
+                    pivot = col;
+                }
+            }
+            if (pivot != row) {
+                var tmp = copy.uncheckedGet(pivot, col);
+                copy.uncheckedSet(pivot, col, copy.uncheckedGet(row, col));
+                copy.uncheckedSet(row, col, tmp);
+                det *= -1.0;
+            }
+            if (Math.abs(copy.uncheckedGet(row, row)) < NumericCommon.NUMERIC_ACCURACY_HIGH) {
+                return 0;
+            }
+            det *= copy.uncheckedGet(row, row);
+            for (int j = row + 1; j < copy.rowsCount(); j++) {
+                double factor = copy.uncheckedGet(j, row) / copy.uncheckedGet(row, row);
+                for (int k = row + 1; k < copy.rowsCount(); k++) {
+                    copy.uncheckedSet(j, k, copy.uncheckedGet(j, k) - factor * copy.uncheckedGet(row, k));
+                }
+            }
+        }
+        return det;
+    }
+
+    /// ////////////////////////////
+    public DoubleMatrix add(DoubleMatrix other) {
+        checkSizes(this, other);
+        combine(other, (l, r) -> l.add(r));
+        return this;
+    }
+
+    public DoubleMatrix add(double other) {
+        apply(v -> v.add(other));
+        return this;
+    }
+
+    /// ////////////////////////////
+    public DoubleMatrix sub(DoubleMatrix other) {
+        checkSizes(this, other);
+        combine(other, (l, r) -> l.sub(r));
+        return this;
+    }
+
+    public DoubleMatrix sub(double other) {
+        apply(v -> v.sub(other));
+        return this;
+    }
+
+    /// ////////////////////////////
+    public DoubleMatrix mul(double other) {
+        apply(v -> v.mul(other));
+        return this;
+    }
+
+    /// ////////////////////////////
+    public DoubleMatrix div(double other) {
+        return this.mul(1.0 / other);
     }
 }

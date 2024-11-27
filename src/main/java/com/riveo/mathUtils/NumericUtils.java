@@ -1,10 +1,16 @@
 package com.riveo.mathUtils;
+
 import com.riveo.functional.IFunction1D;
 import com.riveo.functional.IFunctionND;
 
 
 @SuppressWarnings("all")
 public class NumericUtils {
+
+    public static final int[] factorialsTable128 = calculateFactorials();
+    public static final IFunction1D testFunc1d = NumericUtils::testFunc1D;
+    public static final IFunctionND testFunc2d = NumericUtils::_testFunc2D;
+    public static final IFunctionND testFuncNd = NumericUtils::_testFuncND;
 
     private static int getFactorial(int f) {
         int result = 1;
@@ -21,14 +27,6 @@ public class NumericUtils {
         }
         return factorials;
     }
-
-    public static final int[] factorialsTable128 = calculateFactorials();
-
-    public static final IFunction1D testFunc1d = NumericUtils::testFunc1D;
-
-    public static final IFunctionND testFunc2d = NumericUtils::_testFunc2D;
-
-    public static final IFunctionND testFuncNd = NumericUtils::_testFuncND;
 
     public static int clamp(int value, int min, int max) {
         return Math.min(Math.max(min, value), max);
@@ -188,6 +186,23 @@ public class NumericUtils {
         private final int _denominator;
         private final int _intPart;
 
+        public RationalNumber(final int numerator, final int denominator, final int intPart) {
+            this._numerator = numerator;
+            this._denominator = denominator;
+            this._intPart = intPart;
+        }
+
+        public RationalNumber(final RationalNumber other) {
+            this(other.numerator(), other.denominator(), other.intPart());
+        }
+
+        public RationalNumber(final double value) {
+            int[] number = decimalToRational(value);
+            this._intPart = number[0];
+            this._numerator = number[1];
+            this._denominator = number[2];
+        }
+
         @Override
         public boolean equals(Object other) {
             if (this == other) return true;
@@ -217,23 +232,6 @@ public class NumericUtils {
 
         public int intPart() {
             return _intPart;
-        }
-
-        public RationalNumber(final int numerator, final int denominator, final int intPart) {
-            this._numerator = numerator;
-            this._denominator = denominator;
-            this._intPart = intPart;
-        }
-
-        public RationalNumber(final RationalNumber other) {
-            this(other.numerator(), other.denominator(), other.intPart());
-        }
-
-        public RationalNumber(final double value) {
-            int[] number = decimalToRational(value);
-            this._intPart = number[0];
-            this._numerator = number[1];
-            this._denominator = number[2];
         }
     }
 }

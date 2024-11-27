@@ -7,7 +7,7 @@ import com.riveo.service.MultiDimensional;
 public class MultiDimensionTest {
 
     public static void main(String[] args) {
-        IFunctionND testFunction = x -> Math.pow(x.get(0) - 3, 2) + Math.pow(x.get(1) + 2, 2);
+        IFunctionND testFunction = x -> DoubleVector.dot(DoubleVector.sub(x, 1.0), x);
 
         DoubleVector left = new DoubleVector(-5.0, -5.0);
         DoubleVector right = new DoubleVector(5.0, 5.0);

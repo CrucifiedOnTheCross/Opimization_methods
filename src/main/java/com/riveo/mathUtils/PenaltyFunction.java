@@ -7,9 +7,15 @@ import java.util.Iterator;
 import java.util.Set;
 
 public final class PenaltyFunction implements IFunctionND, Iterable<IFunctionND> {
-    private int _penaltyFunctionMixMode;
-
+    private final Set<IFunctionND> _boundaries;
     public boolean innerPenalty = false;
+    private int _penaltyFunctionMixMode;
+    private IFunctionND _target;
+
+    public PenaltyFunction() {
+        _boundaries = new HashSet<>();
+        _target = v -> (v.dot(v));
+    }
 
     private static double wrapInternal(IFunctionND function, DoubleVector arg) {
         return Math.pow(1.0 / function.call(arg), 12);
@@ -18,10 +24,6 @@ public final class PenaltyFunction implements IFunctionND, Iterable<IFunctionND>
     private static double wrapExternal(IFunctionND function, DoubleVector arg) {
         return Math.pow(Math.max(0.0, function.call(arg)), 4);
     }
-
-    private final Set<IFunctionND> _boundaries;
-
-    private IFunctionND _target;
 
     public int penaltyFunctionMixMode() {
         return _penaltyFunctionMixMode;
@@ -65,11 +67,6 @@ public final class PenaltyFunction implements IFunctionND, Iterable<IFunctionND>
         for (IFunctionND bound : boundaries)
             result |= removeBound(bound);
         return result;
-    }
-
-    public PenaltyFunction() {
-        _boundaries = new HashSet<>();
-        _target = v -> (v.dot(v));
     }
 
     @Override

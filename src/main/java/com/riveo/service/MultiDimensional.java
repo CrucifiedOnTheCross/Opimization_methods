@@ -209,7 +209,8 @@ public class MultiDimensional {
             x_i = x_i_1;
         }
 
-        if (NumericCommon.SHOW_DEBUG_LOG) System.out.printf("gradient descend iterations number : %s\n", cnt + 1);
+        if (NumericCommon.SHOW_DEBUG_LOG)
+            System.out.printf("gradient descend iterations number : %s\n", cnt + 1);
 
         return DoubleVector.add(x_i_1, x_i).mul(0.5);
     }
@@ -240,6 +241,7 @@ public class MultiDimensional {
 
         if (NumericCommon.SHOW_DEBUG_LOG)
             System.out.printf("Conj gradient descend iterations number : %s\n", iteration + 1);
+
         return DoubleVector.add(x_i_1, x_i).mul(0.5);
     }
 
