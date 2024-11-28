@@ -1,9 +1,9 @@
 package com.riveo.service;
 
 import com.riveo.functional.IFunctionND;
-import com.riveo.mathUtils.DoubleMatrix;
-import com.riveo.mathUtils.DoubleVector;
-import com.riveo.mathUtils.NumericCommon;
+import com.riveo.mathutils.DoubleMatrix;
+import com.riveo.mathutils.DoubleVector;
+import com.riveo.mathutils.NumericCommon;
 
 import java.util.Objects;
 

@@ -1,7 +1,7 @@
 package com.riveo;
 
 import com.riveo.functional.IFunctionND;
-import com.riveo.mathUtils.DoubleVector;
+import com.riveo.mathutils.DoubleVector;
 import com.riveo.service.MultiDimensional;
 
 public class NewtonRaphsonTest {

@@ -1,6 +1,6 @@
 package com.riveo.functional;
 
-import com.riveo.mathUtils.DoubleVector;
+import com.riveo.mathutils.DoubleVector;
 
 @FunctionalInterface
 public interface IFunctionND {

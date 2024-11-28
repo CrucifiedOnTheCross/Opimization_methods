@@ -1,4 +1,4 @@
-package com.riveo.mathUtils;
+package com.riveo.mathutils;
 
 import com.riveo.functional.IFunctionND;
 

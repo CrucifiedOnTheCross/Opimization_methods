@@ -1,4 +1,4 @@
-package com.riveo.mathUtils;
+package com.riveo.mathutils;
 
 public final class Slice {
     private final int _end;
