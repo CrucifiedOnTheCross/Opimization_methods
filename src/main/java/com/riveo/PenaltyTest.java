@@ -1,44 +1,63 @@
 package com.riveo;
 
 import com.riveo.functional.IFunctionND;
+import com.riveo.mathutils.AbstractPenaltyFunction;
 import com.riveo.mathutils.DoubleVector;
 import com.riveo.mathutils.ExternalPenaltyFunction;
 import com.riveo.mathutils.InternalPenaltyFunction;
 import com.riveo.service.MultiDimensional;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PenaltyTest {
 
     public static void main(String[] args) {
-        // Пример целевой функции (квадратичная функция)
-        IFunctionND targetFunction = x -> DoubleVector.dot(DoubleVector.sub(x, 3.0), x);
+        // Определение целевой функции (пример: квадратичная функция)
+        IFunctionND targetFunction = x -> (x.get(0) - 5) * x.get(0) + (x.get(1) - 3) * x.get(1); // min at point x = 2.5, y = 1.5
 
-        // Определение штрафных функций
-        ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, 2); // MIX_MODE = 1 (умножение)
-        InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, 2); // MIX_MODE = 1 (умножение)
+        // Определение функций ограничений
+        List<IFunctionND> boundaryFunctions = Arrays.asList(
+                x -> x.get(1) - 5,
+                x -> x.get(0) - 5,
+                x -> -x.get(1) * -1 - 1,
+                x -> -x.get(0) * -1 - 1
+        );
 
-        // Пример ограничения (boundary)
-        IFunctionND boundary1 = new IFunctionND() {
-            @Override
-            public double call(DoubleVector arg) {
-                double x = arg.get(0);
-                return Math.max(0, x - 1);  // x >= 1
-            }
-        };
+        // Создание внешней и внутренней штрафных функций
+        AbstractPenaltyFunction.MixMode MIX_MODE = AbstractPenaltyFunction.MixMode.MIN;
+        ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, MIX_MODE);
+        InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, MIX_MODE);
 
-        externalPenalty.addBoundary(boundary1);
-        internalPenalty.addBoundary(boundary1);
+        // Добавление функций ограничений к штрафным функциям
+        boundaryFunctions.forEach(externalPenalty::addBoundary);
+        boundaryFunctions.forEach(internalPenalty::addBoundary);
 
-        DoubleVector startPoint = new DoubleVector(0.0, 0.0);
+        // Начальная точка
+        DoubleVector startPoint = new DoubleVector(-15., -35.);
 
-        DoubleVector resultTarget = MultiDimensional.conjGradientDescend(targetFunction, startPoint, 1e-6, 100);
-        System.out.println("Результат с внешним штрафом: " + resultTarget);
+        // Вывод результатов оптимизации целевой функции
+        System.out.println("______RESULT TARGET FUNCTION______");
+        printOptimizationResults(targetFunction, startPoint);
 
-        // Применение метода сопряженных градиентов с внешним штрафом
-        DoubleVector resultExternalPenalty = MultiDimensional.conjGradientDescend(externalPenalty, startPoint, 1e-6, 100);
-        System.out.println("Результат с внешним штрафом: " + resultExternalPenalty);
+        // Вывод результатов оптимизации с внутренней штрафной функцией
+        System.out.println("______RESULT INTERNAL PENALTY______");
+        printOptimizationResults(internalPenalty, startPoint);
 
-        // Применение метода сопряженных градиентов с внутренним штрафом
-        DoubleVector resultInternalPenalty = MultiDimensional.conjGradientDescend(internalPenalty, startPoint, 1e-6, 100);
-        System.out.println("Результат с внутренним штрафом: " + resultInternalPenalty);
+        // Вывод результатов оптимизации с внешней штрафной функцией
+        System.out.println("______RESULT EXTERNAL PENALTY______");
+        printOptimizationResults(externalPenalty, startPoint);
+    }
+
+    /**
+     * Выполняет оптимизацию функции различными методами и выводит результаты.
+     *
+     * @param function   оптимизируемая функция
+     * @param startPoint начальная точка
+     */
+    private static void printOptimizationResults(IFunctionND function, DoubleVector startPoint) {
+        System.out.println("Gradient Descent: " + MultiDimensional.gradientDescend(function, startPoint, 1e-6, 100));
+        System.out.println("Conjugate Gradient Descent: " + MultiDimensional.conjGradientDescend(function, startPoint, 1e-6, 100));
+        System.out.println("Newton-Raphson: " + MultiDimensional.newtoneRaphson(function, startPoint, 1e-6, 100) + '\n');
     }
 }

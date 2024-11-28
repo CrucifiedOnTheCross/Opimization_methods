@@ -4,7 +4,7 @@ import com.riveo.functional.IFunctionND;
 
 public class ExternalPenaltyFunction extends AbstractPenaltyFunction {
 
-    public ExternalPenaltyFunction(IFunctionND target, int mixMode) {
+    public ExternalPenaltyFunction(IFunctionND target, MixMode mixMode) {
         super(target, mixMode);
     }
 

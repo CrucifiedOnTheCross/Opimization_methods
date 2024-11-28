@@ -12,21 +12,34 @@ import lombok.Setter;
 @Setter
 public abstract class AbstractPenaltyFunction implements IFunctionND {
 
+    public enum MixMode {
+        SUM,
+        MUL,
+        MAX,
+        MIN
+    }
+
     private final Set<IFunctionND> boundaries = new HashSet<>();
     private IFunctionND target;
-    private int mixMode;
+    private MixMode mixMode;
 
-    public AbstractPenaltyFunction(IFunctionND target, int mixMode) {
+    public AbstractPenaltyFunction(IFunctionND target, MixMode mixMode) {
         this.target = target;
-        this.mixMode = mixMode % 4; // Убедимся, что значение в пределах допустимого диапазона
+        this.mixMode = mixMode != null ? mixMode : MixMode.SUM; // Значение по умолчанию SUM
     }
 
     public boolean addBoundary(IFunctionND boundary) {
-        return boundaries.add(boundary);
+        if (boundaries.contains(boundary))
+            return false;
+        boundaries.add(boundary);
+        return true;
     }
 
     public boolean removeBoundary(IFunctionND boundary) {
-        return boundaries.remove(boundary);
+        if (!boundaries.contains(boundary))
+            return false;
+        boundaries.remove(boundary);
+        return true;
     }
 
     public boolean addBoundaries(IFunctionND... newBoundaries) {
@@ -49,19 +62,24 @@ public abstract class AbstractPenaltyFunction implements IFunctionND {
 
     @Override
     public double call(DoubleVector arg) {
-        double boundaryResult = boundaries.stream()
-                .mapToDouble(boundary -> applyPenalty(boundary, arg))
-                .reduce(switch (mixMode) {
-                    case 1 -> 1.0; // MUL
-                    case 2 -> Double.NEGATIVE_INFINITY; // MAX
-                    case 3 -> Double.POSITIVE_INFINITY; // MIN
-                    default -> 0.0; // SUM
-                }, (result, penaltyValue) -> switch (mixMode) {
-                    case 1 -> result * penaltyValue; // MUL
-                    case 2 -> Math.max(result, penaltyValue); // MAX
-                    case 3 -> Math.min(result, penaltyValue); // MIN
-                    default -> result + penaltyValue; // SUM
-                });
+        double boundaryResult = switch (mixMode) {
+            case MUL -> // Умножение
+                    boundaries.stream()
+                            .mapToDouble(boundary -> applyPenalty(boundary, arg))
+                            .reduce(1.0, (result, penaltyValue) -> result * penaltyValue);
+            case MAX -> // Максимум
+                    boundaries.stream()
+                            .mapToDouble(boundary -> applyPenalty(boundary, arg))
+                            .reduce(Double.NEGATIVE_INFINITY, Math::max);
+            case MIN -> // Минимум
+                    boundaries.stream()
+                            .mapToDouble(boundary -> applyPenalty(boundary, arg))
+                            .reduce(Double.POSITIVE_INFINITY, Math::min);
+            default -> // Сумма
+                    boundaries.stream()
+                            .mapToDouble(boundary -> applyPenalty(boundary, arg))
+                            .sum();
+        };
 
         return target == null ? boundaryResult : boundaryResult + target.call(arg);
     }

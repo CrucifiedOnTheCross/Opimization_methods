@@ -254,19 +254,20 @@ public class MultiDimensional {
     }
 
     public static DoubleVector newtoneRaphson(IFunctionND function, DoubleVector xStart, double eps, int maxIterations) {
-        DoubleVector x_i = new DoubleVector(xStart);
-        DoubleVector x_i_1 = new DoubleVector(xStart);
-        int iteration = 0;
+        DoubleVector x0 = new DoubleVector(xStart);
+        DoubleVector x_1;
+        DoubleMatrix invHes;
+        int iter = 0;
         do {
-            DoubleMatrix hess = Objects.requireNonNull(DoubleMatrix.invert(DoubleMatrix.hessian(function, x_i, eps)));
-            x_i_1 = DoubleVector.sub(x_i, DoubleMatrix.mul(hess, DoubleVector.gradient(function, x_i, eps)));
-            x_i = x_i_1;
-            iteration++;
-        } while (iteration != maxIterations && DoubleVector.sub(x_i_1, x_i).magnitude() >= eps);
+            x_1 = new DoubleVector(x0);
+            invHes = Objects.requireNonNull(DoubleMatrix.invert(DoubleMatrix.hessian(function, x0, eps)));
+            x0.sub(DoubleMatrix.mul(invHes, DoubleVector.gradient(function, x0, eps)));
+            iter++;
+        } while (DoubleVector.distance(x0, x_1) >= 2 * eps && iter < maxIterations);
 
         if (NumericCommon.SHOW_DEBUG_LOG)
-            System.out.printf("Newtone - Raphson iterations number : %s\n", iteration + 1);
-        return DoubleVector.add(x_i_1, x_i).mul(0.5);
+            System.out.printf("Newtone - Raphson iterations number : %s\n", iter + 1);
+        return DoubleVector.add(x0, x_1).mul(0.5);
     }
 
     public static DoubleVector newtoneRaphson(IFunctionND function, DoubleVector xStart, double eps) {
