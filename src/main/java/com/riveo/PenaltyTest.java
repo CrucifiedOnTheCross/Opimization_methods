@@ -22,8 +22,8 @@ public class PenaltyTest {
                 x -> -x.get(0) - 1
         );
 
-        ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, 3);
-        InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, 5);
+        ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, 0);
+        InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, 0);
 
         boundaryFunctions.forEach(externalPenalty::addBoundary);
         boundaryFunctions.forEach(internalPenalty::addBoundary);
