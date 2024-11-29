@@ -19,6 +19,7 @@ public class TemplateVector<T> implements Iterable<T>, Cloneable {
     private T[] _data; // данные (размер 1.5N, где N исходный размер вектора)
     private int _filling; // Заполнение данными от левого края
     private SliceObject<T> _slice = null;
+
     public TemplateVector(final int cap) {
         _data = alloc((int) (cap * VECTOR_SIZE_UPSCALE));
         _filling = cap;

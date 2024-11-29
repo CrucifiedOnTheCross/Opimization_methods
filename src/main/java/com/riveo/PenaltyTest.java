@@ -22,9 +22,8 @@ public class PenaltyTest {
                 x -> -x.get(0) - 1
         );
 
-        AbstractPenaltyFunction.MixMode MIX_MODE = AbstractPenaltyFunction.MixMode.SUM;
-        ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, MIX_MODE);
-        InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, MIX_MODE);
+        ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, 3);
+        InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, 5);
 
         boundaryFunctions.forEach(externalPenalty::addBoundary);
         boundaryFunctions.forEach(internalPenalty::addBoundary);

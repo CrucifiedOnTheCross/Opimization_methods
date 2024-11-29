@@ -4,6 +4,8 @@ import com.riveo.functional.IFunctionND;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +16,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public abstract class AbstractPenaltyFunction implements IFunctionND {
 
-    public enum MixMode {
-        SUM,
-        MUL,
-        MAX,
-        MIN
-    }
+    private static final Logger LOGGER = Logger.getLogger(AbstractPenaltyFunction.class.getName());
 
     private final Set<IFunctionND> boundaries = new HashSet<>();
     private IFunctionND target;
@@ -28,6 +25,16 @@ public abstract class AbstractPenaltyFunction implements IFunctionND {
     public AbstractPenaltyFunction(IFunctionND target, MixMode mixMode) {
         this.target = target;
         this.mixMode = mixMode != null ? mixMode : MixMode.SUM; // Значение по умолчанию SUM
+    }
+
+    public AbstractPenaltyFunction(IFunctionND target, int mixMode) {
+        this.target = target;
+        try {
+            this.mixMode = MixMode.fromValue(mixMode);
+        } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Invalid mix mode: {0}. Defaulting to SUM mode.", mixMode);
+            this.mixMode = MixMode.SUM;
+        }
     }
 
     public boolean addBoundary(IFunctionND boundary) {
@@ -84,5 +91,27 @@ public abstract class AbstractPenaltyFunction implements IFunctionND {
         };
 
         return target == null ? boundaryResult : boundaryResult + target.call(arg);
+    }
+
+    public enum MixMode {
+        SUM(0),
+        MUL(1),
+        MAX(2),
+        MIN(3);
+
+        private final int value;
+
+        MixMode(int value) {
+            this.value = value;
+        }
+
+        public static MixMode fromValue(int value) {
+            for (MixMode mode : MixMode.values()) {
+                if (mode.value == value) {
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("Invalid MixMode value: " + value);
+        }
     }
 }
