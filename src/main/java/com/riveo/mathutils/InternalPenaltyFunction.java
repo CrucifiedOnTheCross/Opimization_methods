@@ -10,7 +10,8 @@ public class InternalPenaltyFunction extends AbstractPenaltyFunction {
 
     @Override
     protected double applyPenalty(IFunctionND boundary, DoubleVector arg) {
-        return Math.pow(1.0 / boundary.call(arg), 2);
+        double boundaryValue = boundary.call(arg);
+        return boundaryValue > 0 ? Math.pow(1.0 / boundaryValue, 2) : 0;
     }
 
 }

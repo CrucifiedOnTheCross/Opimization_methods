@@ -13,27 +13,22 @@ import java.util.List;
 public class PenaltyTest {
 
     public static void main(String[] args) {
-        // Определение целевой функции (пример: квадратичная функция)
         IFunctionND targetFunction = x -> (x.get(0) - 5) * x.get(0) + (x.get(1) - 3) * x.get(1); // min at point x = 2.5, y = 1.5
 
-        // Определение функций ограничений
         List<IFunctionND> boundaryFunctions = Arrays.asList(
                 x -> x.get(1) - 5,
                 x -> x.get(0) - 5,
-                x -> -x.get(1) * -1 - 1,
-                x -> -x.get(0) * -1 - 1
+                x -> -x.get(1) - 1,
+                x -> -x.get(0) - 1
         );
 
-        // Создание внешней и внутренней штрафных функций
-        AbstractPenaltyFunction.MixMode MIX_MODE = AbstractPenaltyFunction.MixMode.MIN;
+        AbstractPenaltyFunction.MixMode MIX_MODE = AbstractPenaltyFunction.MixMode.SUM;
         ExternalPenaltyFunction externalPenalty = new ExternalPenaltyFunction(targetFunction, MIX_MODE);
         InternalPenaltyFunction internalPenalty = new InternalPenaltyFunction(targetFunction, MIX_MODE);
 
-        // Добавление функций ограничений к штрафным функциям
         boundaryFunctions.forEach(externalPenalty::addBoundary);
         boundaryFunctions.forEach(internalPenalty::addBoundary);
 
-        // Начальная точка
         DoubleVector startPoint = new DoubleVector(-15., -35.);
 
         // Вывод результатов оптимизации целевой функции

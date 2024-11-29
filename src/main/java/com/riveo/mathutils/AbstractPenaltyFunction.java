@@ -6,10 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
 public abstract class AbstractPenaltyFunction implements IFunctionND {
 
     public enum MixMode {
